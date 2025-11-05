@@ -14,7 +14,10 @@ CI/CD 자동화는 **GitHub Actions**를 이용하며,
 ---
 ## ▶️ git-hub actions 설정
 
-### Secrect 설정
+### Git-Secret 설정
+- AWS IAM Key, DB Credentials 등 민감 정보 암호화  
+- GitHub Secrets에 등록된 값으로 `deploy.yml` 실행 시 자동 주입  
+
 | Key | Value |
 | --- | --- |
 | EC2_HOST | spring1 IP |
@@ -31,11 +34,18 @@ CI/CD 자동화는 **GitHub Actions**를 이용하며,
 | NAVER_CLIENT_SECRET | naver secrect api key |
 
 ### 📁 Workflow / Dockerfile 생성
-
-`load_balancing_deploy.yml`: GitHub Actions 배포 설정   
+ 
+### GitHub Actions (`load_balancing_deploy.yml`)
+- 코드 푸시 시 자동 실행  
+- Docker 이미지 빌드 → EC2 SSH 접속 → 컨테이너 재배포  
+- 환경 변수는 Git-Secret으로 관리
+  
 [load_balancing_deploy.yml](https://github.com/ccocco55/actions-app/blob/master/.github/workflows/deploy-to-ec2.yml)
-
-`Dockerfile`: Docker 빌드 설정   
+  
+### Dockerfile
+- Spring Boot JAR 파일을 컨테이너 이미지로 패키징  
+- Docker 빌드 설정
+  
 [Dockerfile](https://github.com/ccocco55/actions-app/blob/master/Dockerfile)
 
 ---
@@ -115,24 +125,6 @@ docker logs [컨테이너 이름]
 4. 애플리케이션은 내부적으로 **Spring Security**, **JWT**를 사용하여 인증/인가 처리  
 5. 정적 파일은 **Amazon S3**, 캐시 데이터는 **Redis**, 영속 데이터는 **PostgreSQL**과 연동  
 6. 클라이언트(Web/React Native)가 EC2의 Public IP 또는 도메인을 통해 API 호출
-
----
-
-## 🔧 CI/CD 구성 요소
-
-### GitHub Actions (`.github/workflows/deploy.yml`)
-- 코드 푸시 시 자동 실행  
-- Docker 이미지 빌드 → EC2 SSH 접속 → 컨테이너 재배포  
-- 환경 변수는 Git-Secret으로 관리  
-
-### Git-Secret
-- AWS IAM Key, DB Credentials 등 민감 정보 암호화  
-- GitHub Secrets에 등록된 값으로 `deploy.yml` 실행 시 자동 주입  
-
-### Dockerfile
-- Spring Boot JAR 파일을 컨테이너 이미지로 패키징  
-- 경량 이미지로 빌드 (예: `openjdk:17-jdk-slim`)  
-- 내부 포트 8080 노출  
 
 ---
 
