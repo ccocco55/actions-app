@@ -12,6 +12,84 @@ CI/CD 자동화는 **GitHub Actions**를 이용하며,
 ![슬라이드4](https://github.com/user-attachments/assets/351eeb0c-34bd-4e46-8f76-927419787ef0)
 
 ---
+## ▶️ git-hub actions 설정
+
+### Secrect 설정
+| Key | Value |
+| --- | --- |
+| EC2_HOST | spring1 IP |
+| EC2_USER | EC2 접속 유저 |
+| EC2_KEY | pem key |
+| EC2_DATABASE_HOST | batabase IP |
+| AWS_REGION | aws 지역 |
+| AWS_S3_BUCKET | AWS S3 Bucket 이름 |
+| AWS_ACCESS_KEY_ID | IAM access key |
+| AWS_SECRET_ACCESS_KEY | IAM secrect key |
+| KAKAO_CLIENT_ID | kakao rest api Key |
+| KAKAO_CLIENT_SECRET | kakao secrect api key |
+| NAVER_CLIENT_ID | naver rest api key |
+| NAVER_CLIENT_SECRET | naver secrect api key |
+
+### 📁 Workflow / Dockerfile 생성
+
+`load_balancing_deploy.yml`: GitHub Actions 배포 설정   
+[load_balancing_deploy.yml](https://github.com/ccocco55/actions-app/blob/master/.github/workflows/deploy-to-ec2.yml)
+
+`Dockerfile`: Docker 빌드 설정   
+[Dockerfile](https://github.com/ccocco55/actions-app/blob/master/Dockerfile)
+
+---
+
+
+## ✅ Docker 설치 및 초기 설정
+
+```
+# Docker 패키지 설치
+sudo apt install docker.io -y
+
+# Docker 서비스를 부팅 시 자동으로 실행되도록 설정
+sudo systemctl enable docker
+
+# Docker 서비스 시작
+sudo systemctl start docker
+
+# Docker 서비스 상태 확인 (active 상태면 정상 작동 중)
+sudo systemctl status docker
+
+# 현재 로그인한 사용자(ubuntu)를 docker 그룹에 추가
+# 이렇게 해야 매번 sudo 없이 docker 명령어를 사용할 수 있음
+sudo usermod -aG docker ubuntu
+
+# ⚠️ 위 명령 후 세션(터미널)을 종료하고 다시 접속해야 그룹 적용이 반영됨
+
+# ----------------------------------------
+# ✅ Docker 동작 확인
+# ----------------------------------------
+
+# Docker 버전 확인
+docker --version
+
+# 현재 존재하는 모든 컨테이너 목록 확인
+docker ps -a
+
+# 실행 중인 컨테이너 목록 확인
+docker ps
+
+# ⚠️ 모든 컨테이너 삭제
+# `docker ps -q` : 컨테이너 ID만 출력
+# `docker rm` : 컨테이너 삭제
+
+# 모든 Docker 이미지 삭제
+docker rmi -f $(docker images -q)
+
+
+# 🪵 컨테이너 로그 확인
+# 실행 중이거나 중지된 컨테이너의 로그를 확인
+# [컨테이너 이름] 부분에 실제 컨테이너 ID 또는 이름 입력
+docker logs [컨테이너 이름]
+
+```
+---
 
 ## ⚙️ 구성 요소
 
@@ -77,18 +155,6 @@ CI/CD 자동화는 **GitHub Actions**를 이용하며,
   - PostgreSQL 데이터는 정기 백업 또는 Amazon RDS 마이그레이션 권장  
   - Redis는 캐시 용도이므로 영구 저장 불필요  
 
----
-
-## 🛠️ 기술 스택
-
-| 영역 | 기술 |
-|------|------|
-| Infra | AWS EC2, S3, IAM |
-| Backend | Spring Boot, Spring Security, JWT |
-| Database | PostgreSQL |
-| Cache | Redis |
-| CI/CD | GitHub Actions, Docker, Git-Secret |
-| Client | Web (Chrome), React Native |
 
 ---
 
